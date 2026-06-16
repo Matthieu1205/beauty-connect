@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace salon — BeautyConnect</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  body { background: var(--cream-2); }
+  .dash { display:grid; grid-template-columns: 250px 1fr; min-height:100vh; }
+  .side { background:var(--bordeaux-900); color:var(--cream); padding:26px 18px; position:sticky; top:0; height:100vh; }
+  .side .brand { color:var(--cream); margin-bottom:34px; } .side .brand b, .side .brand b span { color:var(--cream); }
+  .side nav a { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:var(--radius-sm);
+    color:rgba(251,247,241,.78); font-size:.97rem; margin-bottom:4px; cursor:pointer; transition:all .18s; }
+  .side nav a:hover { background:rgba(255,255,255,.06); color:var(--cream); }
+  .side nav a.on { background:linear-gradient(135deg,var(--gold-400),var(--gold-500)); color:var(--bordeaux-900); font-weight:600; }
+  .side .dot { width:8px; height:8px; border-radius:50%; background:currentColor; opacity:.8; }
+  .side .upgrade { position:absolute; bottom:24px; left:18px; right:18px; background:rgba(201,162,75,.14);
+    border:1px solid rgba(201,162,75,.3); border-radius:var(--radius); padding:16px; }
+  .side .upgrade b { color:var(--gold-300); } .side .upgrade p { color:rgba(251,247,241,.7); font-size:.82rem; margin:6px 0 12px; }
+  .main { padding:30px 38px; }
+  .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:14px; }
+  .topbar h1 { font-size:1.7rem; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:28px; }
+  .kpi { background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:20px; }
+  .kpi span { color:var(--muted); font-size:.88rem; } .kpi b { display:block; font-size:1.9rem; color:var(--bordeaux-700); font-weight:600; margin-top:4px; }
+  .kpi .delta { font-size:.82rem; color:var(--success); }
+  .panel { background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin-bottom:22px; }
+  .panel h3 { margin-bottom:16px; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--line); }
+  td { padding:14px 12px; border-bottom:1px solid var(--line); font-size:.95rem; }
+  tr:last-child td { border:0; }
+  .status { padding:5px 12px; border-radius:999px; font-size:.8rem; font-weight:600; }
+  .status.ok { background:rgba(63,125,91,.12); color:var(--success); }
+  .status.wait { background:rgba(201,162,75,.16); color:#9a7a1e; }
+  .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; }
+  .cal .day { text-align:center; font-size:.8rem; color:var(--muted); font-weight:600; padding-bottom:6px; }
+  .cal .slot { background:var(--cream-2); border-radius:var(--radius-sm); min-height:84px; padding:8px; font-size:.78rem; }
+  .cal .ev { background:linear-gradient(135deg,var(--bordeaux-700),var(--bordeaux-600)); color:var(--cream);
+    border-radius:8px; padding:5px 7px; margin-bottom:5px; }
+  .cal .ev.gold { background:linear-gradient(135deg,var(--gold-400),var(--gold-500)); color:var(--bordeaux-900); }
+  .cal .blocked { background:repeating-linear-gradient(45deg,var(--cream-2),var(--cream-2) 6px,#eaddcd 6px,#eaddcd 12px); color:var(--muted); border-radius:8px; padding:5px 7px; }
+  .gal { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .gal div { height:120px; border-radius:var(--radius-sm); position:relative; }
+  .gal .t { position:absolute; bottom:8px; left:8px; background:rgba(61,14,28,.75); color:var(--cream); padding:4px 10px; border-radius:999px; font-size:.72rem; }
+  .plans { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .plan { border:1px solid var(--line); border-radius:var(--radius); padding:26px; position:relative; }
+  .plan.pro { border-color:var(--gold-500); box-shadow:var(--shadow-gold); }
+  .plan .price { font-size:2.2rem; font-weight:600; color:var(--bordeaux-700); margin:10px 0; }
+  .plan .price small { font-size:.9rem; color:var(--muted); font-weight:400; }
+  .plan ul li { padding:8px 0; border-bottom:1px solid var(--line); font-size:.93rem; color:var(--ink); }
+  .plan ul li:last-child { border:0; }
+  .plan .tag-pill { position:absolute; top:-12px; right:20px; background:var(--gold-500); color:var(--bordeaux-900); }
+  .sec { display:none; } .sec.on { display:block; animation:rise .4s ease both; }
+  @media (max-width:900px){ .dash{grid-template-columns:1fr;} .side{position:static;height:auto;} .side .upgrade{position:static;margin-top:20px;}
+    .kpis{grid-template-columns:1fr 1fr;} .plans{grid-template-columns:1fr;} .gal{grid-template-columns:1fr 1fr;} .cal{overflow-x:auto;} }
+</style>
+</head>
+<body>
+
+<div class="dash">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a>
+    <nav id="sideNav">
+      <a class="on" data-sec="apercu"><span class="dot"></span>Aperçu</a>
+      <a data-sec="calendrier"><span class="dot"></span>Calendrier</a>
+      <a data-sec="prestations"><span class="dot"></span>Prestations</a>
+      <a data-sec="clientes"><span class="dot"></span>Clientes</a>
+      <a data-sec="galerie"><span class="dot"></span>Galerie</a>
+      <a data-sec="abonnement"><span class="dot"></span>Abonnement</a>
+    </nav>
+    <div class="upgrade">
+      <b>Passez en Premium</b>
+      <p>Mise en avant, photos illimitées et publicité locale.</p>
+      <a class="btn btn-gold btn-sm btn-block" onclick="show('abonnement')">Découvrir</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div><p class="eyebrow">Espace salon</p><h1>Maison Awa</h1></div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <span class="tag-pill">Abonnement Standard</span>
+        <a href="index.html" class="btn btn-ghost btn-sm">Voir ma fiche</a>
+      </div>
+    </div>
+
+    <!-- APERCU -->
+    <section class="sec on" id="apercu">
+      <div class="kpis">
+        <div class="kpi"><span>Réservations (mois)</span><b>148</b><span class="delta">+12% vs mois dernier</span></div>
+        <div class="kpi"><span>Taux de présence</span><b>92%</b><span class="delta">+5 points</span></div>
+        <div class="kpi"><span>Revenus estimés</span><b>1,2M</b><span class="delta">FCFA ce mois</span></div>
+        <div class="kpi"><span>Note moyenne</span><b>4,9</b><span class="delta">214 avis</span></div>
+      </div>
+      <div class="panel">
+        <h3>Rendez-vous du jour</h3>
+        <table>
+          <thead><tr><th>Heure</th><th>Cliente</th><th>Prestation</th><th>Statut</th></tr></thead>
+          <tbody>
+            <tr><td>09:00</td><td>Aïcha Koné</td><td>Tresses</td><td><span class="status ok">Confirmé</span></td></tr>
+            <tr><td>10:30</td><td>Fatou Diabaté</td><td>Locks</td><td><span class="status ok">Confirmé</span></td></tr>
+            <tr><td>14:30</td><td>Mariam Touré</td><td>Coloration</td><td><span class="status wait">En attente</span></td></tr>
+            <tr><td>16:00</td><td>Grace Yao</td><td>Coupe</td><td><span class="status ok">Confirmé</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CALENDRIER -->
+    <section class="sec" id="calendrier">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="margin:0">Semaine du 15 juin 2026</h3>
+          <button class="btn btn-ghost btn-sm">Bloquer un créneau</button>
+        </div>
+        <div class="cal">
+          <div class="day">Lun</div><div class="day">Mar</div><div class="day">Mer</div><div class="day">Jeu</div><div class="day">Ven</div><div class="day">Sam</div><div class="day">Dim</div>
+          <div class="slot"><div class="ev">09:00 Tresses</div><div class="ev gold">14:30 Locks</div></div>
+          <div class="slot"><div class="ev">10:00 Coupe</div></div>
+          <div class="slot"><div class="ev gold">11:30 Coloration</div><div class="ev">16:00 Braids</div></div>
+          <div class="slot"><div class="ev">09:30 Tresses</div></div>
+          <div class="slot"><div class="ev">10:00 Locks</div><div class="ev gold">15:00 Perruque</div></div>
+          <div class="slot"><div class="ev">08:30 Tresses</div><div class="ev">13:00 Coupe</div></div>
+          <div class="slot"><div class="blocked">Fermé</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRESTATIONS -->
+    <section class="sec" id="prestations">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="margin:0">Mes prestations</h3>
+          <button class="btn btn-gold btn-sm">Ajouter une prestation</button>
+        </div>
+        <table>
+          <thead><tr><th>Service</th><th>Prix</th><th>Durée</th><th></th></tr></thead>
+          <tbody id="prestaRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- CLIENTES -->
+    <section class="sec" id="clientes">
+      <div class="panel">
+        <h3>Mes clientes</h3>
+        <table>
+          <thead><tr><th>Cliente</th><th>Derniers RDV</th><th>Préférence</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td>Aïcha Koné</td><td>8 rendez-vous</td><td>Tresses fines</td><td><span class="text-gold">★</span> 5,0</td></tr>
+            <tr><td>Fatou Diabaté</td><td>5 rendez-vous</td><td>Locks entretien</td><td><span class="text-gold">★</span> 4,8</td></tr>
+            <tr><td>Mariam Touré</td><td>3 rendez-vous</td><td>Coloration miel</td><td><span class="text-gold">★</span> 4,7</td></tr>
+            <tr><td>Grace Yao</td><td>2 rendez-vous</td><td>Coupe courte</td><td><span class="text-gold">★</span> 4,9</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- GALERIE -->
+    <section class="sec" id="galerie">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="margin:0">Galerie avant / après</h3>
+          <button class="btn btn-gold btn-sm">Publier une réalisation</button>
+        </div>
+        <div class="gal">
+          <div data-illus="Tresses|#6E1E33|#C9A24B"><span class="t">Tresses</span></div>
+          <div data-illus="Locks|#511325|#D7B968"><span class="t">Locks</span></div>
+          <div data-illus="Coloration|#872A42|#E7D29A"><span class="t">Coloration</span></div>
+          <div data-illus="Perruques|#3D0E1C|#C9A24B"><span class="t">Perruque</span></div>
+          <div data-illus="Braids|#6E1E33|#D4AF37"><span class="t">Braids</span></div>
+          <div data-illus="Coupe|#511325|#C9A24B"><span class="t">Coupe</span></div>
+          <div data-illus="Coloration|#872A42|#D7B968"><span class="t">Soin</span></div>
+          <div data-illus="Tresses|#6E1E33|#E7D29A"><span class="t">Vanilles</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABONNEMENT -->
+    <section class="sec" id="abonnement">
+      <div class="panel">
+        <h3>Choisissez votre formule</h3>
+        <p class="text-muted" style="margin-bottom:22px">Gagnez en visibilité et attirez plus de clientes.</p>
+        <div class="plans">
+          <div class="plan">
+            <b>Standard</b>
+            <div class="price">5 000 <small>FCFA / mois</small></div>
+            <ul>
+              <li>Fiche salon complète</li>
+              <li>Gestion du calendrier</li>
+              <li>Jusqu'à 10 photos</li>
+              <li>Avis et notes clientes</li>
+            </ul>
+            <button class="btn btn-ghost btn-block" style="margin-top:18px">Formule actuelle</button>
+          </div>
+          <div class="plan pro">
+            <span class="tag-pill">Recommandé</span>
+            <b>Premium</b>
+            <div class="price">10 000 <small>FCFA / mois</small></div>
+            <ul>
+              <li>Tout le Standard inclus</li>
+              <li>Mise en avant dans la recherche</li>
+              <li>Photos illimitées</li>
+              <li>Publicité locale ciblée</li>
+            </ul>
+            <button class="btn btn-gold btn-block" style="margin-top:18px">Passer en Premium</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+  function show(sec){
+    document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('on', s.id===sec));
+    document.querySelectorAll('#sideNav a').forEach(a=>a.classList.toggle('on', a.dataset.sec===sec));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  document.querySelectorAll('#sideNav a').forEach(a=>a.onclick=()=>show(a.dataset.sec));
+  document.getElementById('prestaRows').innerHTML = PRESTATIONS.map(p=>
+    `<tr><td><b>${p.nom}</b></td><td>${fcfa(p.prix)}</td><td>${p.duree}</td>
+     <td style="text-align:right"><button class="btn btn-ghost btn-sm">Modifier</button></td></tr>`).join('');
+</script>
+</body>
+</html>

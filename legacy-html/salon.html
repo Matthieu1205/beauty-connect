@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salon — BeautyConnect</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .gallery { display:grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; height: 380px; margin-top: 28px; }
+  .gallery div { border-radius: var(--radius); position: relative; overflow:hidden; }
+  .gallery div:first-child { grid-row: 1/3; }
+  .gallery .gtag { position:absolute; left:14px; bottom:14px; background:rgba(61,14,28,.78); color:var(--cream);
+    padding:6px 13px; border-radius:999px; font-size:.78rem; font-weight:600; }
+  .salon-head { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; margin-top:30px; }
+  .salon-head .meta { color: var(--muted); margin-top:8px; }
+  .salon-head .meta .rating { margin-right:14px; }
+  .layout { display:grid; grid-template-columns: 1fr 380px; gap: 40px; align-items:start; padding: 36px 0 80px; }
+  .panel { background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:26px; box-shadow:var(--shadow-sm); margin-bottom:26px; }
+  .panel h3 { margin-bottom:14px; }
+  .presta-line { display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid var(--line); }
+  .presta-line:last-child { border:0; }
+  .presta-line .info b { font-size:1.05rem; } .presta-line .info span { color:var(--muted); font-size:.9rem; display:block; }
+  .presta-line .price { font-weight:600; color:var(--bordeaux-700); margin-right:14px; }
+  .hours { display:grid; grid-template-columns:1fr 1fr; gap:8px 30px; }
+  .hours div { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid var(--line); font-size:.95rem; }
+  .avis { padding:18px 0; border-bottom:1px solid var(--line); } .avis:last-child{border:0;}
+  .avis .top { display:flex; justify-content:space-between; }
+  .avis .who { font-weight:600; } .avis .stars { color:var(--star); letter-spacing:1px; }
+  .avis p { color:var(--ink); margin-top:8px; }
+  .avis small { color:var(--muted); }
+  .ratings-summary { display:flex; gap:30px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+  .big-note { font-size:3rem; font-weight:600; color:var(--bordeaux-700); line-height:1; }
+  .bars { flex:1; min-width:220px; }
+  .bar-row { display:flex; align-items:center; gap:10px; font-size:.88rem; margin:5px 0; }
+  .bar { flex:1; height:8px; border-radius:999px; background:var(--cream-2); overflow:hidden; }
+  .bar i { display:block; height:100%; background:linear-gradient(90deg,var(--gold-400),var(--bordeaux-700)); }
+
+  /* Booking */
+  .booking { position:sticky; top:90px; background:var(--white); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; }
+  .booking .bk-head { background:linear-gradient(135deg,var(--bordeaux-700),var(--bordeaux-900)); color:var(--cream); padding:22px 24px; }
+  .booking .bk-head b { font-size:1.2rem; }
+  .booking .bk-body { padding:24px; }
+  .steps-dots { display:flex; gap:8px; margin-bottom:20px; }
+  .steps-dots span { flex:1; height:5px; border-radius:999px; background:var(--cream-2); }
+  .steps-dots span.on { background:var(--gold-500); }
+  .opt-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .opt { border:1px solid var(--line); border-radius:var(--radius-sm); padding:11px; text-align:center; cursor:pointer; font-size:.92rem; transition:all .15s; }
+  .opt:hover { border-color:var(--gold-500); }
+  .opt.sel { background:var(--bordeaux-700); color:var(--cream); border-color:var(--bordeaux-700); }
+  .summary-line { display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--line); font-size:.95rem; }
+  .summary-line.total { border:0; font-weight:600; font-size:1.1rem; color:var(--bordeaux-700); padding-top:14px; }
+  .confirm { text-align:center; padding:14px 0; }
+  .confirm .check { width:64px; height:64px; border-radius:50%; margin:0 auto 16px; display:grid; place-items:center;
+    background:linear-gradient(135deg,var(--gold-400),var(--gold-500)); }
+  .confirm .check svg { width:30px; height:30px; }
+  @media (max-width: 900px){
+    .layout { grid-template-columns:1fr; } .booking { position:static; } .gallery { grid-template-columns:1fr 1fr; height:auto; grid-auto-rows:140px; }
+    .gallery div:first-child { grid-row:auto; grid-column:1/3; height:200px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a>
+    <nav class="nav-links">
+      <a href="recherche.html">Salons</a>
+      <a href="diagnostic.html">Diagnostic capillaire</a>
+      <a href="index.html#comment">Comment ça marche</a>
+      <a href="salon-dashboard.html">Espace salon</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="connexion.html" class="btn btn-ghost btn-sm">Se connecter</a>
+      <a href="recherche.html" class="btn btn-primary btn-sm">Réserver</a>
+      <button class="btn btn-ghost btn-sm nav-toggle" onclick="toggleMenu()">Menu</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <p style="margin-top:24px;color:var(--muted);font-size:.9rem"><a href="recherche.html" style="color:var(--bordeaux-700)">Salons</a> · <span id="crumb"></span></p>
+
+  <div class="gallery" id="gallery"></div>
+
+  <div class="salon-head">
+    <div>
+      <h1 id="salonNom" style="font-size:clamp(2rem,3.6vw,2.8rem)"></h1>
+      <div class="meta" id="salonMeta"></div>
+    </div>
+    <div style="display:flex;gap:12px"><a href="#avis" class="btn btn-ghost btn-sm">Voir les avis</a><a href="#book" class="btn btn-gold btn-sm">Réserver</a></div>
+  </div>
+
+  <div class="layout">
+    <main>
+      <div class="panel"><h3>À propos</h3><p id="salonDesc" class="text-muted"></p></div>
+
+      <div class="panel">
+        <h3>Prestations & tarifs</h3>
+        <div id="prestaList"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Horaires d'ouverture</h3>
+        <div class="hours">
+          <div><span>Lundi</span><b>09h – 19h</b></div>
+          <div><span>Mardi</span><b>09h – 19h</b></div>
+          <div><span>Mercredi</span><b>09h – 19h</b></div>
+          <div><span>Jeudi</span><b>09h – 19h</b></div>
+          <div><span>Vendredi</span><b>09h – 20h</b></div>
+          <div><span>Samedi</span><b>08h – 20h</b></div>
+          <div><span>Dimanche</span><b>Sur rendez-vous</b></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Localisation</h3>
+        <p class="text-muted" id="salonAdresse" style="margin-bottom:14px"></p>
+        <div style="height:260px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line)">
+          <iframe id="salonMap" title="Localisation du salon" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            style="width:100%;height:100%;border:0;display:block"></iframe>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+          <a id="btnItineraire" class="btn btn-primary btn-sm" target="_blank" rel="noopener" href="#">Itinéraire (Google Maps)</a>
+          <a id="btnYango" class="btn btn-gold btn-sm" target="_blank" rel="noopener" href="#">Commander un Yango</a>
+        </div>
+      </div>
+
+      <div class="panel" id="avis">
+        <h3>Avis des clientes</h3>
+        <div class="ratings-summary">
+          <div class="big-note" id="bigNote"></div>
+          <div class="bars">
+            <div class="bar-row"><span>Qualité</span><span class="bar"><i style="width:96%"></i></span></div>
+            <div class="bar-row"><span>Accueil</span><span class="bar"><i style="width:94%"></i></span></div>
+            <div class="bar-row"><span>Horaires</span><span class="bar"><i style="width:90%"></i></span></div>
+            <div class="bar-row"><span>Qualité / prix</span><span class="bar"><i style="width:88%"></i></span></div>
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="avis"><div class="top"><span class="who">Aïcha K.</span><span class="stars">★★★★★</span></div><p>Très satisfaite de mes tresses, salon propre et personnel accueillant.</p><small>Il y a 3 jours · Tresses</small></div>
+        <div class="avis"><div class="top"><span class="who">Fatou D.</span><span class="stars">★★★★★</span></div><p>Travail soigné et ponctuel. J'ai adoré le résultat, je reviendrai.</p><small>Il y a 1 semaine · Locks</small></div>
+        <div class="avis"><div class="top"><span class="who">Mariam T.</span><span class="stars">★★★★☆</span></div><p>Belle coloration, accueil chaleureux. Un peu d'attente mais ça valait le coup.</p><small>Il y a 2 semaines · Coloration</small></div>
+      </div>
+    </main>
+
+    <!-- BOOKING -->
+    <aside id="book">
+      <div class="booking">
+        <div class="bk-head"><b>Réserver un créneau</b><div style="opacity:.85;font-size:.9rem;margin-top:4px">Confirmation immédiate par SMS et email</div></div>
+        <div class="bk-body">
+          <div class="steps-dots"><span class="on" data-d="1"></span><span data-d="2"></span><span data-d="3"></span><span data-d="4"></span></div>
+
+          <!-- Etape 1 : prestation -->
+          <div class="bk-step" data-step="1">
+            <label>Choisissez une prestation</label>
+            <div class="opt-grid" id="bkPresta"></div>
+          </div>
+
+          <!-- Etape 2 : date -->
+          <div class="bk-step" data-step="2" style="display:none">
+            <label>Choisissez une date</label>
+            <div class="opt-grid" id="bkDate"></div>
+          </div>
+
+          <!-- Etape 3 : heure -->
+          <div class="bk-step" data-step="3" style="display:none">
+            <label>Choisissez une heure</label>
+            <div class="opt-grid" id="bkHeure"></div>
+          </div>
+
+          <!-- Etape 4 : récap -->
+          <div class="bk-step" data-step="4" style="display:none">
+            <label>Récapitulatif</label>
+            <div class="summary-line"><span>Prestation</span><b id="rPresta">—</b></div>
+            <div class="summary-line"><span>Date</span><b id="rDate">—</b></div>
+            <div class="summary-line"><span>Heure</span><b id="rHeure">—</b></div>
+            <div class="summary-line"><span>Paiement</span><b>Sur place</b></div>
+            <div class="summary-line total"><span>Total</span><span id="rTotal">—</span></div>
+          </div>
+
+          <!-- Confirmation -->
+          <div class="bk-step" data-step="5" style="display:none">
+            <div class="confirm">
+              <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#3D0E1C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+              <h3>Réservation confirmée</h3>
+              <p class="text-muted" style="margin:10px 0 18px">Un récapitulatif vous a été envoyé par SMS, email et WhatsApp. Vous recevrez un rappel la veille.</p>
+              <a href="recherche.html" class="btn btn-primary btn-block">Découvrir d'autres salons</a>
+            </div>
+          </div>
+
+          <div id="bkNav" style="display:flex;gap:10px;margin-top:22px">
+            <button class="btn btn-ghost btn-sm" id="bkBack" style="display:none" onclick="bkStep(-1)">Retour</button>
+            <button class="btn btn-gold btn-block" id="bkNext" onclick="bkStep(1)">Continuer</button>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="grid">
+      <div><a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a><p>La plateforme de réservation beauté et coiffure à Abidjan.</p></div>
+      <div><h4>Clientes</h4><ul><li><a href="recherche.html">Rechercher un salon</a></li><li><a href="diagnostic.html">Diagnostic capillaire</a></li></ul></div>
+      <div><h4>Salons</h4><ul><li><a href="salon-dashboard.html">Espace salon</a></li><li><a href="admin.html">Administration</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li>Abidjan, Côte d'Ivoire</li><li>contact@beautyconnect.ci</li></ul></div>
+    </div>
+    <div class="legal"><span>© <span data-year></span> BeautyConnect.</span><span>Conditions · Confidentialité</span></div>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>
+  const id = +(new URLSearchParams(location.search).get('id') || 1);
+  const s = SALONS.find(x=>x.id===id) || SALONS[0];
+
+  document.getElementById('crumb').textContent = s.nom;
+  document.getElementById('salonNom').textContent = s.nom;
+  document.getElementById('salonMeta').innerHTML =
+    `<span class="rating"><span class="stars">${stars(s.note)}</span> ${s.note} <span class="text-muted">(${s.avis} avis)</span></span> · ${s.quartier}, ${s.commune}`;
+  document.getElementById('salonDesc').textContent = s.desc + " Notre équipe de professionnelles vous accueille dans un cadre soigné et chaleureux, avec des produits de qualité adaptés à tous types de cheveux.";
+  document.getElementById('bigNote').textContent = s.note.toString().replace('.',',');
+
+  // Localisation : carte + liens Google Maps / Yango
+  document.getElementById('salonAdresse').textContent = s.quartier + ', ' + s.commune + ' — Abidjan, Côte d\'Ivoire';
+  document.getElementById('salonMap').src = mapEmbedLatLng(s.lat, s.lng, 15);
+  document.getElementById('btnItineraire').href = gmapsDirURL(s.lat, s.lng);
+  document.getElementById('btnYango').href = yangoURL(s.lat, s.lng);
+
+  const galTypes = [s.types[0], "Tresses", "Locks", "Coloration", "Braids"];
+  const galPairs = [[s.c1,s.c2],["#6E1E33","#E7D29A"],["#511325","#C9A24B"],["#872A42","#D7B968"],["#3D0E1C","#C9A24B"]];
+  const gtags = ["Salon","Tresses","Locks","Coloration","Réalisation"];
+  document.getElementById('gallery').innerHTML = galTypes.map((t,i)=>
+    `<div style="position:relative;background-image:url('${hairURI(t, galPairs[i][0], galPairs[i][1])}');background-size:cover;background-position:center">
+       ${photoImg(t)}<span class="gtag" style="z-index:2">${gtags[i]}</span></div>`).join('');
+
+  // prestations du salon (sous-ensemble selon types)
+  const prestaSalon = PRESTATIONS.filter(p => s.types.includes(p.nom));
+  document.getElementById('prestaList').innerHTML = prestaSalon.map(p =>
+    `<div class="presta-line"><div class="info"><b>${p.nom}</b><span>Durée ${p.duree}</span></div>
+     <div style="display:flex;align-items:center"><span class="price">${fcfa(p.prix)}</span>
+     <button class="btn btn-ghost btn-sm" onclick="pick('${p.nom}',${p.prix})">Choisir</button></div></div>`).join('');
+
+  // ---- Tunnel de réservation ----
+  let step = 1;
+  const choix = { presta:null, prix:0, date:null, heure:null };
+
+  document.getElementById('bkPresta').innerHTML = prestaSalon.map(p =>
+    `<div class="opt" data-presta="${p.nom}" data-prix="${p.prix}">${p.nom}<br><small>${fcfa(p.prix)}</small></div>`).join('');
+  const dates = ["Lun 16","Mar 17","Mer 18","Jeu 19","Ven 20","Sam 21"];
+  document.getElementById('bkDate').innerHTML = dates.map(d=>`<div class="opt" data-date="${d} juin">${d}</div>`).join('');
+  const heures = ["09:00","10:30","12:00","14:30","16:00","17:30"];
+  document.getElementById('bkHeure').innerHTML = heures.map(h=>`<div class="opt" data-heure="${h}">${h}</div>`).join('');
+
+  function bindOpts(sel, key){
+    document.querySelectorAll(sel+' .opt').forEach(o=>o.onclick=()=>{
+      document.querySelectorAll(sel+' .opt').forEach(x=>x.classList.remove('sel'));
+      o.classList.add('sel');
+      if(key==='presta'){ choix.presta=o.dataset.presta; choix.prix=+o.dataset.prix; }
+      else choix[key]=o.dataset[key];
+    });
+  }
+  bindOpts('#bkPresta','presta'); bindOpts('#bkDate','date'); bindOpts('#bkHeure','heure');
+
+  function pick(nom, prix){
+    choix.presta=nom; choix.prix=prix; step=2; showStep();
+    document.querySelectorAll('#bkPresta .opt').forEach(o=>o.classList.toggle('sel', o.dataset.presta===nom));
+    document.getElementById('book').scrollIntoView({behavior:'smooth'});
+  }
+
+  function showStep(){
+    document.querySelectorAll('.bk-step').forEach(el=>el.style.display = (+el.dataset.step===step)?'block':'none');
+    document.querySelectorAll('.steps-dots span').forEach(d=>d.classList.toggle('on', +d.dataset.d<=Math.min(step,4)));
+    document.getElementById('bkBack').style.display = (step>1 && step<5)?'inline-flex':'none';
+    const next = document.getElementById('bkNext');
+    if(step===4){ next.textContent="Confirmer la réservation"; }
+    else if(step>=5){ document.getElementById('bkNav').style.display='none'; }
+    else { next.textContent="Continuer"; }
+    if(step===4){
+      document.getElementById('rPresta').textContent = choix.presta||"—";
+      document.getElementById('rDate').textContent = choix.date||"—";
+      document.getElementById('rHeure').textContent = choix.heure||"—";
+      document.getElementById('rTotal').textContent = choix.prix?fcfa(choix.prix):"—";
+    }
+  }
+  function bkStep(dir){
+    if(dir>0){
+      if(step===1 && !choix.presta) return alert("Choisissez une prestation.");
+      if(step===2 && !choix.date) return alert("Choisissez une date.");
+      if(step===3 && !choix.heure) return alert("Choisissez une heure.");
+    }
+    step += dir; showStep();
+  }
+  showStep();
+</script>
+</body>
+</html>

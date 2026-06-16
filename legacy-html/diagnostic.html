@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostic capillaire — BeautyConnect</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .diag-hero { background: linear-gradient(135deg,var(--bordeaux-800),var(--bordeaux-900)); color:var(--cream); padding:60px 0; }
+  .diag-hero h1 { color:var(--cream); } .diag-hero p { color:rgba(251,247,241,.8); max-width:620px; margin-top:14px; font-size:1.1rem; }
+  .diag-hero .tag-pill { background:rgba(201,162,75,.2); color:var(--gold-300); }
+  .wrap { display:grid; grid-template-columns: 1fr 1fr; gap:40px; align-items:start; padding:46px 0 80px; }
+  .form-card, .result-card { background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:30px; box-shadow:var(--shadow-sm); }
+  .opt-grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .opt { border:1px solid var(--line); border-radius:var(--radius-sm); padding:13px; text-align:center; cursor:pointer; transition:all .15s; font-size:.94rem; }
+  .opt:hover { border-color:var(--gold-500); } .opt.sel { background:var(--bordeaux-700); color:var(--cream); border-color:var(--bordeaux-700); }
+  .upload { border:1.5px dashed var(--line); border-radius:var(--radius-sm); padding:24px; text-align:center; color:var(--muted); cursor:pointer; }
+  .upload:hover { border-color:var(--gold-500); color:var(--bordeaux-700); }
+  .result-card { position:sticky; top:90px; }
+  .empty-state { text-align:center; padding:30px 10px; color:var(--muted); }
+  .empty-state .ring { width:80px;height:80px;border-radius:50%;margin:0 auto 18px;
+    background:conic-gradient(var(--gold-500),var(--bordeaux-700),var(--gold-400),var(--bordeaux-700)); -webkit-mask:radial-gradient(circle 30px,transparent 98%,#000); }
+  .suggestion { border:1px solid var(--line); border-radius:var(--radius-sm); padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+  .suggestion b { font-size:1.05rem; } .suggestion .est { color:var(--bordeaux-700); font-weight:600; }
+  .match-salon { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
+  .match-salon:last-child { border:0; }
+  .match-salon .av { width:46px;height:46px;border-radius:12px; }
+  @media (max-width:900px){ .wrap{grid-template-columns:1fr;} .result-card{position:static;} }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a>
+    <nav class="nav-links">
+      <a href="recherche.html">Salons</a>
+      <a href="diagnostic.html">Diagnostic capillaire</a>
+      <a href="index.html#comment">Comment ça marche</a>
+      <a href="salon-dashboard.html">Espace salon</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="connexion.html" class="btn btn-ghost btn-sm">Se connecter</a>
+      <a href="recherche.html" class="btn btn-primary btn-sm">Réserver</a>
+      <button class="btn btn-ghost btn-sm nav-toggle" onclick="toggleMenu()">Menu</button>
+    </div>
+  </div>
+</header>
+
+<div class="diag-hero">
+  <div class="container">
+    <span class="tag-pill">Exclusivité BeautyConnect</span>
+    <h1 style="margin-top:14px">Diagnostic capillaire</h1>
+    <p>Répondez à quelques questions sur vos cheveux. Nous vous suggérons les coiffures adaptées, les salons spécialisés et une estimation de prix, avant de réserver.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="wrap">
+    <!-- FORM -->
+    <div class="form-card">
+      <div class="field">
+        <label>Type de cheveux</label>
+        <div class="opt-grid3" id="qType"></div>
+      </div>
+      <div class="field">
+        <label>Longueur</label>
+        <div class="opt-grid3" id="qLong"></div>
+      </div>
+      <div class="field">
+        <label>Épaisseur</label>
+        <div class="opt-grid3" id="qEpais"></div>
+      </div>
+      <div class="field">
+        <label>Objectif recherché</label>
+        <div class="opt-grid3" id="qObjectif"></div>
+      </div>
+      <div class="field">
+        <label>Photo de vos cheveux (facultatif)</label>
+        <label class="upload" for="photo">Ajouter une photo pour une suggestion plus précise</label>
+        <input type="file" id="photo" accept="image/*" style="display:none">
+      </div>
+      <button class="btn btn-gold btn-block" onclick="analyse()">Obtenir mes recommandations</button>
+    </div>
+
+    <!-- RESULT -->
+    <div class="result-card" id="result">
+      <div class="empty-state">
+        <div class="ring"></div>
+        <h3>Vos recommandations</h3>
+        <p>Renseignez vos informations puis lancez l'analyse pour découvrir les coiffures et salons faits pour vous.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="grid">
+      <div><a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a><p>La plateforme de réservation beauté et coiffure à Abidjan.</p></div>
+      <div><h4>Clientes</h4><ul><li><a href="recherche.html">Rechercher un salon</a></li><li><a href="diagnostic.html">Diagnostic capillaire</a></li></ul></div>
+      <div><h4>Salons</h4><ul><li><a href="salon-dashboard.html">Espace salon</a></li><li><a href="admin.html">Administration</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li>Abidjan, Côte d'Ivoire</li><li>contact@beautyconnect.ci</li></ul></div>
+    </div>
+    <div class="legal"><span>© <span data-year></span> BeautyConnect.</span><span>Conditions · Confidentialité</span></div>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>
+  const Q = {
+    type: ["Crépus 4C","Frisés 3C","Bouclés 3A","Défrisés","Naturels","Locks"],
+    long: ["Courts","Mi-longs","Longs"],
+    epais: ["Fins","Moyens","Épais"],
+    objectif: ["Protéger","Styliser","Entretenir","Changer"]
+  };
+  const choix = { type:null, long:null, epais:null, objectif:null };
+
+  function fill(idKey, arr, cols){
+    document.getElementById(idKey).innerHTML = arr.map(v=>`<div class="opt" data-v="${v}">${v}</div>`).join('');
+    document.querySelectorAll('#'+idKey+' .opt').forEach(o=>o.onclick=()=>{
+      document.querySelectorAll('#'+idKey+' .opt').forEach(x=>x.classList.remove('sel'));
+      o.classList.add('sel'); choix[idKey.replace('q','').toLowerCase()] = o.dataset.v;
+    });
+  }
+  fill('qType', Q.type); fill('qLong', Q.long); fill('qEpais', Q.epais); fill('qObjectif', Q.objectif);
+  // map keys correctly
+  function bind(id, key){ document.querySelectorAll('#'+id+' .opt').forEach(o=>o.onclick=()=>{
+    document.querySelectorAll('#'+id+' .opt').forEach(x=>x.classList.remove('sel')); o.classList.add('sel'); choix[key]=o.dataset.v; }); }
+  bind('qType','type'); bind('qLong','long'); bind('qEpais','epais'); bind('qObjectif','objectif');
+
+  document.getElementById('photo').onchange = e => {
+    const lbl = document.querySelector('.upload');
+    if(e.target.files[0]) lbl.textContent = "Photo ajoutée : " + e.target.files[0].name;
+  };
+
+  // moteur de suggestion simple basé sur les réponses
+  function suggestions(){
+    const base = [];
+    const t = choix.type, o = choix.objectif, l = choix.long;
+    if(t==="Crépus 4C" || t==="Naturels"){ base.push(["Locks twists",15000],["Tresses collées",10000],["Vanilles",12000]); }
+    else if(t==="Frisés 3C"){ base.push(["Braids",12000],["Tresses",10000],["Twist out",8000]); }
+    else if(t==="Bouclés 3A"){ base.push(["Coupe dégradée",4000],["Coloration",14000],["Soin hydratant",6000]); }
+    else if(t==="Défrisés"){ base.push(["Coupe",3000],["Coloration",14000],["Soin réparateur",7000]); }
+    else if(t==="Locks"){ base.push(["Entretien locks",9000],["Coloration locks",14000],["Retwist",8000]); }
+    else { base.push(["Tresses",10000],["Perruque sur mesure",18000],["Coupe",3000]); }
+    if(o==="Protéger") base.unshift(["Style protecteur (box braids)",13000]);
+    if(o==="Changer") base.unshift(["Perruque relooking",18000]);
+    if(l==="Longs") base.push(["Locks longues entretien",12000]);
+    // déduplique sur le nom
+    const seen = new Set(); return base.filter(([n])=> !seen.has(n) && seen.add(n)).slice(0,4);
+  }
+
+  function analyse(){
+    if(!choix.type || !choix.long || !choix.epais){
+      alert("Veuillez renseigner au moins le type, la longueur et l'épaisseur."); return;
+    }
+    const sug = suggestions();
+    const prixMoy = Math.round(sug.reduce((a,[,p])=>a+p,0)/sug.length/500)*500;
+    const matched = SALONS.filter(s => sug.some(([n]) => s.types.some(tp => n.includes(tp)))).slice(0,3);
+    const pool = matched.length ? matched : SALONS.slice(0,3);
+
+    document.getElementById('result').innerHTML = `
+      <p class="eyebrow">Votre profil</p>
+      <h3 style="margin:6px 0 4px">${choix.type} · ${choix.long} · ${choix.epais}</h3>
+      <p class="text-muted" style="margin-bottom:20px">Objectif : ${choix.objectif||"non précisé"}. Estimation moyenne autour de <b style="color:var(--bordeaux-700)">${fcfa(prixMoy)}</b>.</p>
+      <p class="eyebrow">Coiffures recommandées</p>
+      <div style="margin:12px 0 22px">
+        ${sug.map(([n,p])=>`<div class="suggestion"><b>${n}</b><span class="est">≈ ${fcfa(p)}</span></div>`).join('')}
+      </div>
+      <p class="eyebrow">Salons spécialisés</p>
+      <div style="margin-top:12px">
+        ${pool.map(s=>`<a class="match-salon" href="salon.html?id=${s.id}">
+          <span class="av" style="position:relative;overflow:hidden;background-image:url('${hairURI(s.types[0], s.c1, s.c2)}');background-size:cover;background-position:center">${photoImg(s.types[0])}</span>
+          <span style="flex:1"><b>${s.nom}</b><br><small class="text-muted">${s.commune} · <span style="color:var(--star)">${stars(s.note)}</span> ${s.note}</small></span>
+          <span class="btn btn-ghost btn-sm">Voir</span>
+        </a>`).join('')}
+      </div>
+      <a href="recherche.html" class="btn btn-gold btn-block" style="margin-top:22px">Réserver maintenant</a>
+    `;
+    document.getElementById('result').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+</script>
+</body>
+</html>

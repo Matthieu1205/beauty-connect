@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administration — BeautyConnect</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  body { background: var(--cream-2); }
+  .dash { display:grid; grid-template-columns: 250px 1fr; min-height:100vh; }
+  .side { background:var(--bordeaux-900); color:var(--cream); padding:26px 18px; position:sticky; top:0; height:100vh; }
+  .side .brand { color:var(--cream); margin-bottom:6px; } .side .brand b, .side .brand b span { color:var(--cream); }
+  .side .role { color:var(--gold-300); font-size:.8rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:30px; padding-left:50px; }
+  .side nav a { display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:var(--radius-sm);
+    color:rgba(251,247,241,.78); font-size:.97rem; margin-bottom:4px; cursor:pointer; transition:all .18s; }
+  .side nav a:hover { background:rgba(255,255,255,.06); color:var(--cream); }
+  .side nav a.on { background:linear-gradient(135deg,var(--gold-400),var(--gold-500)); color:var(--bordeaux-900); font-weight:600; }
+  .side .dot { width:8px; height:8px; border-radius:50%; background:currentColor; opacity:.8; }
+  .main { padding:30px 38px; }
+  .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
+  .topbar h1 { font-size:1.7rem; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:24px; }
+  .kpi { background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:20px; }
+  .kpi span { color:var(--muted); font-size:.88rem; } .kpi b { display:block; font-size:1.9rem; color:var(--bordeaux-700); font-weight:600; margin-top:4px; }
+  .kpi .delta { font-size:.82rem; color:var(--success); }
+  .row2 { display:grid; grid-template-columns: 1.5fr 1fr; gap:22px; }
+  .panel { background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:24px; margin-bottom:22px; }
+  .panel h3 { margin-bottom:16px; }
+  .chart { display:flex; align-items:flex-end; gap:14px; height:200px; padding-top:10px; }
+  .chart .col { flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .chart .bar { width:100%; border-radius:10px 10px 0 0; background:linear-gradient(180deg,var(--gold-400),var(--bordeaux-700)); }
+  .chart small { color:var(--muted); font-size:.78rem; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--line); }
+  td { padding:14px 12px; border-bottom:1px solid var(--line); font-size:.95rem; }
+  tr:last-child td { border:0; }
+  .status { padding:5px 12px; border-radius:999px; font-size:.8rem; font-weight:600; }
+  .status.ok { background:rgba(63,125,91,.12); color:var(--success); }
+  .status.wait { background:rgba(201,162,75,.16); color:#9a7a1e; }
+  .status.bad { background:rgba(135,42,66,.12); color:var(--bordeaux-600); }
+  .verif { display:flex; gap:6px; flex-wrap:wrap; }
+  .verif span { font-size:.74rem; padding:3px 9px; border-radius:999px; background:rgba(63,125,91,.12); color:var(--success); }
+  .verif span.no { background:var(--cream-2); color:var(--muted); }
+  .actions { display:flex; gap:8px; }
+  @media (max-width:900px){ .dash{grid-template-columns:1fr;} .side{position:static;height:auto;} .kpis{grid-template-columns:1fr 1fr;} .row2{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div class="dash">
+  <aside class="side">
+    <a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a>
+    <div class="role">Administration</div>
+    <nav>
+      <a class="on"><span class="dot"></span>Tableau de bord</a>
+      <a><span class="dot"></span>Salons</a>
+      <a><span class="dot"></span>Clientes</a>
+      <a><span class="dot"></span>Réservations</a>
+      <a><span class="dot"></span>Paiements</a>
+      <a><span class="dot"></span>Réclamations</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div><p class="eyebrow">Vue d'ensemble</p><h1>Tableau de bord</h1></div>
+      <a href="index.html" class="btn btn-ghost btn-sm">Quitter</a>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi"><span>Réservations (mois)</span><b>3 842</b><span class="delta">+18% vs mois dernier</span></div>
+      <div class="kpi"><span>Salons actifs</span><b>124</b><span class="delta">+9 ce mois</span></div>
+      <div class="kpi"><span>Clientes actives</span><b>7 510</b><span class="delta">+22%</span></div>
+      <div class="kpi"><span>Revenus (abonnements)</span><b>1,1M</b><span class="delta">FCFA / mois</span></div>
+    </div>
+
+    <div class="row2">
+      <div class="panel">
+        <h3>Réservations par mois</h3>
+        <div class="chart" id="chart"></div>
+      </div>
+      <div class="panel">
+        <h3>Répartition par commune</h3>
+        <table>
+          <tbody>
+            <tr><td>Cocody</td><td style="text-align:right"><b>38</b> salons</td></tr>
+            <tr><td>Yopougon</td><td style="text-align:right"><b>27</b> salons</td></tr>
+            <tr><td>Marcory</td><td style="text-align:right"><b>24</b> salons</td></tr>
+            <tr><td>Plateau</td><td style="text-align:right"><b>19</b> salons</td></tr>
+            <tr><td>Bingerville</td><td style="text-align:right"><b>12</b> salons</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VALIDATION SALONS -->
+    <div class="panel">
+      <h3>Salons en attente de validation</h3>
+      <table>
+        <thead><tr><th>Salon</th><th>Commune</th><th>Vérifications</th><th>Statut</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Glow Studio</b></td><td>Cocody</td>
+            <td><div class="verif"><span>Identité</span><span>Localisation</span><span>Numéro</span></div></td>
+            <td><span class="status wait">À valider</span></td>
+            <td><div class="actions"><button class="btn btn-gold btn-sm">Valider</button><button class="btn btn-ghost btn-sm">Refuser</button></div></td>
+          </tr>
+          <tr>
+            <td><b>Coiffure Express</b></td><td>Abobo</td>
+            <td><div class="verif"><span>Identité</span><span>Numéro</span><span class="no">Localisation</span></div></td>
+            <td><span class="status wait">À valider</span></td>
+            <td><div class="actions"><button class="btn btn-gold btn-sm">Valider</button><button class="btn btn-ghost btn-sm">Refuser</button></div></td>
+          </tr>
+          <tr>
+            <td><b>Diva Hair</b></td><td>Treichville</td>
+            <td><div class="verif"><span>Identité</span><span>Localisation</span><span>Numéro</span></div></td>
+            <td><span class="status wait">À valider</span></td>
+            <td><div class="actions"><button class="btn btn-gold btn-sm">Valider</button><button class="btn btn-ghost btn-sm">Refuser</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- RECLAMATIONS -->
+    <div class="panel">
+      <h3>Dernières réclamations</h3>
+      <table>
+        <thead><tr><th>Cliente</th><th>Salon</th><th>Motif</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td>Awa S.</td><td>Tresses & Co</td><td>Retard sur rendez-vous</td><td><span class="status ok">Résolue</span></td></tr>
+          <tr><td>Nadia B.</td><td>Afro Glam</td><td>Annulation tardive</td><td><span class="status wait">En cours</span></td></tr>
+          <tr><td>Linda K.</td><td>Studio Nappy</td><td>Prestation non conforme</td><td><span class="status bad">Ouverte</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+  const data = [{m:"Jan",v:55},{m:"Fév",v:62},{m:"Mar",v:70},{m:"Avr",v:78},{m:"Mai",v:88},{m:"Juin",v:100}];
+  document.getElementById('chart').innerHTML = data.map(d=>
+    `<div class="col"><div class="bar" style="height:${d.v}%"></div><small>${d.m}</small></div>`).join('');
+</script>
+</body>
+</html>

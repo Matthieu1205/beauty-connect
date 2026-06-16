@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rechercher un salon — BeautyConnect</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .search-head { background:
+    radial-gradient(700px 380px at 90% -20%, rgba(201,162,75,.2), transparent 60%), var(--cream-2);
+    padding: 46px 0; border-bottom: 1px solid var(--line); }
+  .search-head h1 { font-size: clamp(1.9rem,3.4vw,2.6rem); }
+  .layout { display: grid; grid-template-columns: 290px 1fr; gap: 32px; align-items: start; padding: 40px 0 80px; }
+  .filters { position: sticky; top: 90px; background: var(--white); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); }
+  .filters h4 { font-size: .82rem; letter-spacing: .14em; text-transform: uppercase; color: var(--gold-500); margin: 22px 0 12px; }
+  .filters h4:first-child { margin-top: 0; }
+  .filter-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .range-val { display:flex; justify-content:space-between; font-size:.88rem; color:var(--muted); margin-top:6px; }
+  input[type=range]{ accent-color: var(--bordeaux-700); padding:0; }
+  .results-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
+  .results-top b { color: var(--bordeaux-700); }
+  .map { height: 280px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); position: relative; }
+  .map iframe { width:100%; height:100%; border:0; display:block; filter: saturate(1.05); }
+  .map-bar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    margin: 10px 0 26px; }
+  .map-bar .hint { color: var(--muted); font-size:.9rem; }
+  .map-bar .acts { display:flex; gap:10px; flex-wrap:wrap; }
+  .results-grid { display:grid; grid-template-columns: repeat(2,1fr); gap: 24px; }
+  .filter-toggle { display:none; }
+  @media (max-width: 880px){
+    .layout { grid-template-columns: 1fr; } .filters { position: static; }
+    .results-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a>
+    <nav class="nav-links">
+      <a href="recherche.html">Salons</a>
+      <a href="diagnostic.html">Diagnostic capillaire</a>
+      <a href="index.html#comment">Comment ça marche</a>
+      <a href="salon-dashboard.html">Espace salon</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="connexion.html" class="btn btn-ghost btn-sm">Se connecter</a>
+      <a href="recherche.html" class="btn btn-primary btn-sm">Réserver</a>
+      <button class="btn btn-ghost btn-sm nav-toggle" onclick="toggleMenu()">Menu</button>
+    </div>
+  </div>
+</header>
+
+<div class="search-head">
+  <div class="container">
+    <p class="eyebrow">Recherche</p>
+    <h1>Trouvez votre salon</h1>
+  </div>
+</div>
+
+<div class="container">
+  <div class="layout">
+    <!-- FILTRES -->
+    <aside class="filters">
+      <h4>Commune</h4>
+      <div class="filter-chips" id="communeChips"></div>
+
+      <h4>Type de coiffure</h4>
+      <div class="filter-chips" id="typeChips"></div>
+
+      <h4>Budget maximum</h4>
+      <input type="range" id="prixRange" min="2000" max="6000" step="500" value="6000">
+      <div class="range-val"><span>2 000 FCFA</span><span id="prixVal">6 000 FCFA</span></div>
+
+      <h4>Note minimum</h4>
+      <div class="filter-chips" id="noteChips"></div>
+
+      <hr class="divider">
+      <button class="btn btn-ghost btn-block btn-sm" onclick="resetFilters()">Réinitialiser</button>
+    </aside>
+
+    <!-- RESULTATS -->
+    <main>
+      <div class="map">
+        <iframe id="gmap" title="Carte des salons" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=Abidjan&z=12&output=embed"></iframe>
+      </div>
+      <div class="map-bar">
+        <span class="hint" id="mapHint">Salons à Abidjan</span>
+        <div class="acts">
+          <a id="openMaps" class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=Abidjan">Ouvrir dans Google Maps</a>
+          <a id="openYango" class="btn btn-gold btn-sm" target="_blank" rel="noopener" href="https://yango.go.link/route?end-lat=5.3364&end-lon=-4.0267&lang=fr">Commander un Yango</a>
+        </div>
+      </div>
+      <div class="results-top">
+        <span><b id="count">0</b> salons trouvés</span>
+        <select id="sort" style="width:auto">
+          <option value="note">Trier : mieux notés</option>
+          <option value="prix">Trier : prix croissant</option>
+        </select>
+      </div>
+      <div class="results-grid" id="results"></div>
+    </main>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <div class="grid">
+      <div><a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a><p>La plateforme de réservation beauté et coiffure à Abidjan.</p></div>
+      <div><h4>Clientes</h4><ul><li><a href="recherche.html">Rechercher un salon</a></li><li><a href="diagnostic.html">Diagnostic capillaire</a></li></ul></div>
+      <div><h4>Salons</h4><ul><li><a href="salon-dashboard.html">Espace salon</a></li><li><a href="admin.html">Administration</a></li></ul></div>
+      <div><h4>Contact</h4><ul><li>Abidjan, Côte d'Ivoire</li><li>contact@beautyconnect.ci</li></ul></div>
+    </div>
+    <div class="legal"><span>© <span data-year></span> BeautyConnect.</span><span>Conditions · Confidentialité</span></div>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>
+  const COMMUNES = ["Cocody","Marcory","Plateau","Yopougon","Bingerville"];
+  const TYPES = ["Tresses","Braids","Locks","Perruques","Défrisage","Coupe","Coloration"];
+  const NOTES = [{l:"Toutes",v:0},{l:"4,5+",v:4.5},{l:"4,7+",v:4.7},{l:"4,9+",v:4.9}];
+  const params = new URLSearchParams(location.search);
+
+  let state = {
+    commune: params.get('commune') && COMMUNES.includes(params.get('commune')) ? params.get('commune') : "Toutes",
+    type: params.get('type') && TYPES.includes(params.get('type')) ? params.get('type') : "Toutes",
+    prix: 6000, note: 0, sort: "note"
+  };
+
+  function chip(label, active){ return `<span class="chip ${active?'active':''}">${label}</span>`; }
+
+  function buildFilters(){
+    document.getElementById('communeChips').innerHTML =
+      ["Toutes",...COMMUNES].map(c=>chip(c, state.commune===c)).join('');
+    document.getElementById('typeChips').innerHTML =
+      ["Toutes",...TYPES].map(t=>chip(t, state.type===t)).join('');
+    document.getElementById('noteChips').innerHTML =
+      NOTES.map(n=>`<span class="chip ${state.note===n.v?'active':''}" data-v="${n.v}">${n.l}</span>`).join('');
+
+    document.querySelectorAll('#communeChips .chip').forEach(el=>el.onclick=()=>{state.commune=el.textContent;render();});
+    document.querySelectorAll('#typeChips .chip').forEach(el=>el.onclick=()=>{state.type=el.textContent;render();});
+    document.querySelectorAll('#noteChips .chip').forEach(el=>el.onclick=()=>{state.note=parseFloat(el.dataset.v);render();});
+  }
+
+  document.getElementById('prixRange').oninput = e => {
+    state.prix = +e.target.value;
+    document.getElementById('prixVal').textContent = fcfa(state.prix);
+    render();
+  };
+  document.getElementById('sort').onchange = e => { state.sort = e.target.value; render(); };
+
+  function resetFilters(){
+    state = {commune:"Toutes",type:"Toutes",prix:6000,note:0,sort:state.sort};
+    document.getElementById('prixRange').value = 6000;
+    document.getElementById('prixVal').textContent = fcfa(6000);
+    render();
+  }
+
+  function render(){
+    buildFilters();
+    let list = SALONS.filter(s =>
+      (state.commune==="Toutes" || s.commune===state.commune) &&
+      (state.type==="Toutes" || s.types.includes(state.type)) &&
+      (s.prixMin <= state.prix) &&
+      (s.note >= state.note)
+    );
+    list.sort((a,b)=> state.sort==="prix" ? a.prixMin-b.prixMin : b.note-a.note);
+    document.getElementById('count').textContent = list.length;
+    document.getElementById('results').innerHTML = list.length
+      ? list.map(salonCardHTML).join('')
+      : `<p class="text-muted" style="grid-column:1/-1;padding:30px 0">Aucun salon ne correspond à ces critères. Essayez d'élargir votre recherche.</p>`;
+    updateMap(list);
+  }
+
+  function updateMap(list){
+    const isCommune = state.commune !== "Toutes";
+    const coords = isCommune ? (COMMUNE_COORDS[state.commune] || COMMUNE_COORDS.Abidjan) : COMMUNE_COORDS.Abidjan;
+    const place = isCommune ? state.commune + ", Abidjan" : "Abidjan";
+    const zoom = isCommune ? 14 : 12;
+    document.getElementById('gmap').src = mapEmbedQuery(place, zoom);
+    document.getElementById('mapHint').textContent = isCommune
+      ? list.length + " salon(s) à " + state.commune
+      : "Salons à Abidjan";
+    // boutons : 1er salon de la liste comme destination, sinon centre commune
+    const dest = list.length ? [list[0].lat, list[0].lng] : coords;
+    document.getElementById('openMaps').href = gmapsViewURL(dest[0], dest[1]);
+    document.getElementById('openYango').href = yangoURL(dest[0], dest[1]);
+  }
+  render();
+</script>
+</body>
+</html>

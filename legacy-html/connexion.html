@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion — BeautyConnect</title>
+<link rel="stylesheet" href="assets/styles.css">
+<style>
+  .auth { min-height: calc(100vh - 73px); display:grid; grid-template-columns: 1fr 1fr; }
+  .auth-visual { background:
+      radial-gradient(600px 400px at 30% 20%, rgba(201,162,75,.3), transparent 60%),
+      linear-gradient(150deg,var(--bordeaux-800),var(--bordeaux-900));
+    color:var(--cream); padding:60px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden; }
+  .auth-visual h2 { color:var(--cream); font-size:2.4rem; max-width:420px; }
+  .auth-visual p { color:rgba(251,247,241,.8); margin-top:16px; max-width:420px; font-size:1.05rem; }
+  .auth-visual .brand b, .auth-visual .brand b span { color:var(--cream); }
+  .auth-points { display:flex; flex-direction:column; gap:14px; }
+  .auth-points div { display:flex; gap:12px; align-items:center; color:rgba(251,247,241,.9); }
+  .auth-points .dot { width:8px;height:8px;border-radius:50%;background:var(--gold-400); }
+  .auth-form { display:flex; align-items:center; justify-content:center; padding:50px; }
+  .auth-card { width:100%; max-width:420px; }
+  .tabs { display:flex; background:var(--cream-2); border-radius:999px; padding:5px; margin-bottom:28px; }
+  .tabs button { flex:1; border:none; background:transparent; font-family:var(--font); font-size:.98rem; font-weight:600;
+    padding:11px; border-radius:999px; cursor:pointer; color:var(--muted); transition:all .2s; }
+  .tabs button.on { background:var(--white); color:var(--bordeaux-700); box-shadow:var(--shadow-sm); }
+  .social { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:22px; }
+  .social .btn { border:1px solid var(--line); background:var(--white); }
+  .or { display:flex; align-items:center; gap:14px; color:var(--muted); font-size:.85rem; margin-bottom:22px; }
+  .or::before, .or::after { content:""; flex:1; height:1px; background:var(--line); }
+  .seg { display:flex; gap:8px; margin-bottom:18px; }
+  .seg .chip { flex:1; justify-content:center; }
+  @media (max-width:900px){ .auth{grid-template-columns:1fr;} .auth-visual{display:none;} }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a>
+    <div class="nav-actions"><a href="index.html" class="btn btn-ghost btn-sm">Retour à l'accueil</a></div>
+  </div>
+</header>
+
+<div class="auth">
+  <div class="auth-visual">
+    <a class="brand" href="index.html"><span class="mark">BC</span><b>Beauty<span>Connect</span></b></a>
+    <div>
+      <h2>Votre beauté, sur rendez-vous.</h2>
+      <p>Réservez vos prestations en quelques secondes et gérez vos rendez-vous depuis un seul espace.</p>
+    </div>
+    <div class="auth-points">
+      <div><span class="dot"></span>Réservation immédiate, sans attente</div>
+      <div><span class="dot"></span>Prix transparents avant déplacement</div>
+      <div><span class="dot"></span>Rappels par SMS, email et WhatsApp</div>
+    </div>
+  </div>
+
+  <div class="auth-form">
+    <div class="auth-card">
+      <div class="tabs">
+        <button class="on" id="tabLogin" onclick="switchTab('login')">Connexion</button>
+        <button id="tabSignup" onclick="switchTab('signup')">Inscription</button>
+      </div>
+
+      <div class="social">
+        <button class="btn btn-light">Google</button>
+        <button class="btn btn-light">Facebook</button>
+      </div>
+      <div class="or">ou avec votre email / téléphone</div>
+
+      <div class="seg" id="signupOnly" style="display:none">
+        <span class="chip active">Cliente</span>
+        <span class="chip">Salon</span>
+      </div>
+
+      <form onsubmit="event.preventDefault(); alert('Démonstration : authentification simulée.');">
+        <div class="field" id="nameField" style="display:none">
+          <label>Nom complet</label>
+          <input type="text" placeholder="Aïcha Koné">
+        </div>
+        <div class="field">
+          <label>Email ou téléphone</label>
+          <input type="text" placeholder="vous@email.com ou +225 ...">
+        </div>
+        <div class="field">
+          <label>Mot de passe</label>
+          <input type="password" placeholder="••••••••">
+        </div>
+        <div id="loginExtra" style="display:flex; justify-content:flex-end; margin-bottom:18px">
+          <a href="#" style="color:var(--bordeaux-700); font-size:.9rem">Mot de passe oublié</a>
+        </div>
+        <button class="btn btn-primary btn-block" id="submitBtn">Se connecter</button>
+      </form>
+
+      <p class="text-muted" style="text-align:center; margin-top:20px; font-size:.92rem" id="switchHint">
+        Nouvelle sur BeautyConnect ? <a href="#" onclick="switchTab('signup');return false;" style="color:var(--bordeaux-700);font-weight:600">Créer un compte</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+  function switchTab(t){
+    const login = t==='login';
+    document.getElementById('tabLogin').classList.toggle('on', login);
+    document.getElementById('tabSignup').classList.toggle('on', !login);
+    document.getElementById('nameField').style.display = login?'none':'block';
+    document.getElementById('signupOnly').style.display = login?'none':'flex';
+    document.getElementById('loginExtra').style.display = login?'flex':'none';
+    document.getElementById('submitBtn').textContent = login?'Se connecter':'Créer mon compte';
+    document.getElementById('switchHint').innerHTML = login
+      ? `Nouvelle sur BeautyConnect ? <a href="#" onclick="switchTab('signup');return false;" style="color:var(--bordeaux-700);font-weight:600">Créer un compte</a>`
+      : `Vous avez déjà un compte ? <a href="#" onclick="switchTab('login');return false;" style="color:var(--bordeaux-700);font-weight:600">Se connecter</a>`;
+  }
+  function selectProfil(profil){
+    document.querySelectorAll('#signupOnly .chip').forEach(x=>{
+      const isSalon = x.textContent.trim().toLowerCase()==='salon';
+      x.classList.toggle('active', profil==='salon' ? isSalon : !isSalon);
+    });
+  }
+  document.querySelectorAll('#signupOnly .chip').forEach(c=>c.onclick=()=>{
+    document.querySelectorAll('#signupOnly .chip').forEach(x=>x.classList.remove('active')); c.classList.add('active');
+  });
+
+  // Pré-réglage via paramètres d'URL (ex. depuis "Inscrire mon salon")
+  (function(){
+    const p = new URLSearchParams(location.search);
+    if(p.get('mode')==='signup'){ switchTab('signup'); }
+    if(p.get('profil')==='salon'){ switchTab('signup'); selectProfil('salon'); }
+  })();
+</script>
+</body>
+</html>
